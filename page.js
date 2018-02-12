@@ -34,51 +34,6 @@ if (player) {
         player.seekTo(seekTime, true);
     }
 
-    const rightControls = player.querySelector('.ytp-right-controls');
-    const wrapper = document.createElement('div');
-    wrapper.style.display = 'inline-flex';
-    rightControls.parentNode.insertBefore(wrapper, rightControls);
-    
-    const prevTrackButton = document.createElement('button');
-    prevTrackButton.classList.add('ytp-button');
-    prevTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
-        <path id="youtube-tracks-speeddown" fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
-    </svg>`;
-    prevTrackButton.addEventListener("click", toPrevTrack); 
-    wrapper.appendChild(prevTrackButton);
-
-    const trackLabel = document.createElement('div');
-    trackLabel.style.display = 'inline-block';
-    trackLabel.style.textAlign = 'center';
-    trackLabel.innerHTML = player.getVideoData ? player.getVideoData().title : document.querySelector('h1').innerHTML;
-    setInterval(function () {
-        const currentTime = player.getCurrentTime();
-        for (let i = tracks.length -1; i >= 0; i--) {
-            const track = tracks[i];
-            if (currentTime >= track.time) {
-                trackLabel.innerHTML = track.name;
-                break;
-            }
-        }
-    }, 1000) 
-    wrapper.appendChild(trackLabel);
-    
-    const nextTrackButton = document.createElement('button');
-    nextTrackButton.classList.add('ytp-button');
-    nextTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
-        <path id="youtube-tracks-speedup" fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
-    </svg>`;
-    nextTrackButton.addEventListener("click", toNextTrack); 
-    wrapper.appendChild(nextTrackButton);
-
-    document.addEventListener("keyup", function(e) {
-        if (e.key == 'p') {
-            toPrevTrack();
-        } else if (e.key == 'n') {
-            toNextTrack();
-        }
-    });
-
     const processDescription = description => {
         //TODO parse munites and hours
         const parseTime = (t) => {
@@ -138,6 +93,55 @@ if (player) {
             }
         });
         tracks.sort((a, b) => a.time - b.time);
+
+        if (tracks.length == 0) {
+            return;
+        }
+
+        const rightControls = player.querySelector('.ytp-right-controls');
+        const wrapper = document.createElement('div');
+        wrapper.style.display = 'inline-flex';
+        rightControls.parentNode.insertBefore(wrapper, rightControls);
+        
+        const prevTrackButton = document.createElement('button');
+        prevTrackButton.classList.add('ytp-button');
+        prevTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
+            <path id="youtube-tracks-speeddown" fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
+        </svg>`;
+        prevTrackButton.addEventListener("click", toPrevTrack); 
+        wrapper.appendChild(prevTrackButton);
+
+        const trackLabel = document.createElement('div');
+        trackLabel.style.display = 'inline-block';
+        trackLabel.style.textAlign = 'center';
+        trackLabel.innerHTML = player.getVideoData ? player.getVideoData().title : document.querySelector('h1').innerHTML;
+        setInterval(function () {
+            const currentTime = player.getCurrentTime();
+            for (let i = tracks.length -1; i >= 0; i--) {
+                const track = tracks[i];
+                if (currentTime >= track.time) {
+                    trackLabel.innerHTML = track.name;
+                    break;
+                }
+            }
+        }, 1000) 
+        wrapper.appendChild(trackLabel);
+        
+        const nextTrackButton = document.createElement('button');
+        nextTrackButton.classList.add('ytp-button');
+        nextTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
+            <path id="youtube-tracks-speedup" fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
+        </svg>`;
+        nextTrackButton.addEventListener("click", toNextTrack); 
+        wrapper.appendChild(nextTrackButton);
+
+        document.addEventListener("keyup", function(e) {
+            if (e.key == 'p') {
+                toPrevTrack();
+            } else if (e.key == 'n') {
+                toNextTrack();
+            }
+        });
     }
 
     const descriptionId = 'description';
@@ -176,7 +180,6 @@ if (player) {
     }
 }
 
-//TODO multiple params with same name
 function parseParams(href) {
     var paramstr = href.split('?')[1];
     var paramsarr = paramstr.split('&');
