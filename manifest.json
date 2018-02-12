@@ -1,0 +1,28 @@
+{
+  "manifest_version": 2,
+
+  "name": "youtube-tracks",
+  "description": "youtube-tracks",
+  "version": "0.1",
+
+  "applications": {
+    "gecko": {
+      "id": "youtube-tracks@ris58h"
+    }
+  },
+
+  "permissions": [
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "web_accessible_resources": [
+    "page.js"
+  ]
+}
