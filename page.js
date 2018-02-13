@@ -2,12 +2,13 @@
     let player = null;
     let tracks = null;
 
-    //TODO watch history changes
-    window.addEventListener("yt-navigate-start", function(e) {
+    const navListener = function(e) {
         hideControls();
         player = null;
         tracks = null;
-    });
+    }
+    window.addEventListener("popstate", navListener)
+    window.addEventListener("yt-navigate-start", navListener);
 
     setInterval(function () {
         if (player == null && window.location.pathname == '/watch') {
