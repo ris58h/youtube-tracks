@@ -1,77 +1,52 @@
-// TODO: youtube navigation problem
+(function () {
+    let player = null;
+    let tracks = null;
 
-(function () { //WARNING Do not remove!
-var player = document.getElementById("movie_player");
-if (player) {
-    const tracks = [];
-    
-    const toPrevTrack = () => {
-        const currentTime = player.getCurrentTime();
-        let seekTime = 0;
-        for (let i = 0; i < tracks.length; i++) {
-            const prevGap = 2;
-            if (currentTime < tracks[i].time + prevGap) {
-                if (i == 0) {
-                    seekTime = 0;
-                } else {
-                    seekTime = tracks[i - 1].time;
+    //TODO watch history changes
+    window.addEventListener("yt-navigate-start", function(e) {
+        hideControls();
+        player = null;
+        tracks = null;
+    });
+
+    setInterval(function () {
+        if (player == null && window.location.pathname == '/watch') {
+            player = document.querySelector("#movie_player");
+            if (tracks != null && tracks.length > 0) {
+                showControls();
+            }
+        }
+    }, 1000);
+
+    setInterval(function () {
+        if (tracks == null && window.location.pathname == '/watch') {
+            const description = document.querySelector("#content #description");
+            if (description) {
+                //TODO It could be description of previous video!
+                const parsedTracks = parseDescription(description);
+                if (parsedTracks.length > 0) {
+                    tracks = parsedTracks;
                 }
-                break;
+                if (player != null && tracks != null && tracks.length > 0) {
+                    showControls();
+                }
             }
         }
-        player.seekTo(seekTime, true);
-    }
+    }, 1000);
     
-    const toNextTrack = () => {
-        const currentTime = player.getCurrentTime();
-        let seekTime = player.getDuration();
-        for (const track of tracks) {
-            if (currentTime < track.time) {
-                seekTime = track.time;
-                break;
-            }
+    document.addEventListener("keyup", function(e) {
+        if (e.key == 'p') {
+            toPrevTrack();
+        } else if (e.key == 'n') {
+            toNextTrack();
         }
-        player.seekTo(seekTime, true);
-    }
+    });
 
-    const processDescription = description => {
-        //TODO parse munites and hours
-        const parseTime = (t) => {
-            if (t.endsWith('s')) {
-                return parseInt(t.substring(0, t.length - 1));
-            }
+    function parseDescription(description) {
+        if (!description.hasChildNodes()) {
             return null;
-        };
-
-        const processLines = (parent, callback) => {
-            let line = [];
-            for (node of parent.childNodes) {
-                if (node.nodeType == Node.TEXT_NODE) {
-                    const textLines = node.textContent.split('\n');
-                    for (let i = 0; i < textLines.length; i++) {
-                        const textLine = textLines[i];
-                        if (textLine.length > 0) {
-                            line.push(textLine);
-                            callback(line);
-                            line = [];
-                        } else if (line.length > 0) {
-                            callback(line);
-                            line = [];
-                        }
-                    }
-                    if (line.length > 0) {
-                        callback(line);
-                        line = [];
-                    }
-                } else if (node.nodeType == Node.ELEMENT_NODE) {
-                    line.push(node);
-                }
-            }
-            if (line.length > 0) {
-                callback(line);
-            }
         }
-
+        const tracks = [];
         const videoId = parseParams(window.location.href)['v'];
         processLines(description, (line) => {
             let time = null;
@@ -93,15 +68,57 @@ if (player) {
             }
         });
         tracks.sort((a, b) => a.time - b.time);
+        return tracks;        
+    }
 
-        if (tracks.length == 0) {
+    function processLines(parent, callback) {
+        let line = [];
+        for (node of parent.childNodes) {
+            if (node.nodeType == Node.TEXT_NODE) {
+                const textLines = node.textContent.split('\n');
+                for (let i = 0; i < textLines.length; i++) {
+                    const textLine = textLines[i];
+                    if (textLine.length > 0) {
+                        line.push(textLine);
+                        callback(line);
+                        line = [];
+                    } else if (line.length > 0) {
+                        callback(line);
+                        line = [];
+                    }
+                }
+                if (line.length > 0) {
+                    callback(line);
+                    line = [];
+                }
+            } else if (node.nodeType == Node.ELEMENT_NODE) {
+                line.push(node);
+            }
+        }
+        if (line.length > 0) {
+            callback(line);
+        }
+    }
+    
+    const controlsClass = '_youtube-tracks-controls';
+    const controlsSelector = '.' + controlsClass;
+
+    function showControls() {
+        const trackControls = player.querySelector(controlsSelector);
+        if (trackControls) {
+            trackControls.style.visibility = "visible";
             return;
         }
 
+        const controls = createControls();
         const rightControls = player.querySelector('.ytp-right-controls');
+        rightControls.parentNode.insertBefore(controls, rightControls);
+    }
+
+    function createControls() {
         const wrapper = document.createElement('div');
+        wrapper.classList.add(controlsClass);
         wrapper.style.display = 'inline-flex';
-        rightControls.parentNode.insertBefore(wrapper, rightControls);
         
         const prevTrackButton = document.createElement('button');
         prevTrackButton.classList.add('ytp-button');
@@ -114,17 +131,20 @@ if (player) {
         const trackLabel = document.createElement('div');
         trackLabel.style.display = 'inline-block';
         trackLabel.style.textAlign = 'center';
-        trackLabel.innerHTML = player.getVideoData ? player.getVideoData().title : document.querySelector('h1').innerHTML;
         setInterval(function () {
+            if (player == null || tracks == null || tracks.length == 0) {
+                trackLabel.innerHTML = '';
+                return;
+            }
             const currentTime = player.getCurrentTime();
             for (let i = tracks.length -1; i >= 0; i--) {
                 const track = tracks[i];
                 if (currentTime >= track.time) {
                     trackLabel.innerHTML = track.name;
-                    break;
+                    return;
                 }
             }
-        }, 1000) 
+        }, 1000);
         wrapper.appendChild(trackLabel);
         
         const nextTrackButton = document.createElement('button');
@@ -135,59 +155,70 @@ if (player) {
         nextTrackButton.addEventListener("click", toNextTrack); 
         wrapper.appendChild(nextTrackButton);
 
-        document.addEventListener("keyup", function(e) {
-            if (e.key == 'p') {
-                toPrevTrack();
-            } else if (e.key == 'n') {
-                toNextTrack();
-            }
-        });
+        return wrapper;
     }
 
-    const descriptionId = 'description';
-    const description = document.querySelector('#' + descriptionId);
-    if (description) {
-        processDescription(description);
-    } else {
-        const observerCallback = function(mutations, observer) {
-            for (var i = 0; i < mutations.length; i++) {
-                var mutation = mutations[i];
-                var addedNodes = mutation.addedNodes;
-                for (var j = 0; j < addedNodes.length; j++) {
-                    var addedNode = addedNodes[j];
-                    if (addedNode.id === 'description') {
-                        processDescription(addedNode);
-                        observer.disconnect();
-                        return;
-                    } else {
-                        if (addedNode.querySelector) {
-                            const description = addedNode.querySelector('#' + descriptionId);
-                            if (description) {
-                                processDescription(description);
-                                observer.disconnect();
-                                return;
-                            }
-                        }
-                    }
+    function hideControls() {
+        if (player == null) {
+            return;
+        }
+        const trackControls = player.querySelector(controlsSelector);
+        if (trackControls) {
+            trackControls.style.visibility = "hidden";
+        }
+    }
+
+    function toPrevTrack() {
+        if (player == null || tracks == null || tracks.length == 0) {
+            return;
+        }
+        const currentTime = player.getCurrentTime();
+        let seekTime = 0;
+        for (let i = 0; i < tracks.length; i++) {
+            const prevGap = 2;
+            if (currentTime < tracks[i].time + prevGap) {
+                if (i == 0) {
+                    seekTime = 0;
+                } else {
+                    seekTime = tracks[i - 1].time;
                 }
+                break;
             }
-        };
-        const observer = new MutationObserver(observerCallback);
-        observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true
-        });
+        }
+        player.seekTo(seekTime, true);
     }
-}
+    
+    function toNextTrack() {
+        if (player == null || tracks == null || tracks.length == 0) {
+            return;
+        }
+        const currentTime = player.getCurrentTime();
+        let seekTime = player.getDuration();
+        for (const track of tracks) {
+            if (currentTime < track.time) {
+                seekTime = track.time;
+                break;
+            }
+        }
+        player.seekTo(seekTime, true);
+    }
 
-function parseParams(href) {
-    var paramstr = href.split('?')[1];
-    var paramsarr = paramstr.split('&');
-    var params = {};
-    for (const kv of paramsarr) {
-        var tmparr = kv.split('=');
-        params[tmparr[0]] = tmparr[1];
+    function parseParams(href) {
+        var paramstr = href.split('?')[1];
+        var paramsarr = paramstr.split('&');
+        var params = {};
+        for (const kv of paramsarr) {
+            var tmparr = kv.split('=');
+            params[tmparr[0]] = tmparr[1];
+        }
+        return params;
     }
-    return params;
-}
+
+    //TODO parse munites and hours
+    function parseTime(t) {
+        if (t.endsWith('s')) {
+            return parseInt(t.substring(0, t.length - 1));
+        }
+        return null;
+    };
 }());
