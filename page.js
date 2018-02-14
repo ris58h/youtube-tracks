@@ -134,14 +134,18 @@
         trackLabel.style.textAlign = 'center';
         setInterval(function () {
             if (player == null || tracks == null || tracks.length == 0) {
-                trackLabel.innerHTML = '';
+                if (trackLabel.innerHTML != '') {
+                    trackLabel.innerHTML = '';
+                }
                 return;
             }
             const currentTime = player.getCurrentTime();
             for (let i = tracks.length -1; i >= 0; i--) {
                 const track = tracks[i];
                 if (currentTime >= track.time) {
-                    trackLabel.innerHTML = track.name;
+                    if (trackLabel.innerHTML != track.name) {
+                        trackLabel.innerHTML = track.name;
+                    }
                     return;
                 }
             }
