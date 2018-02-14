@@ -101,7 +101,7 @@
         }
     }
     
-    const controlsClass = '_youtube-tracks-controls';
+    const controlsClass = '_youtube-tracks_controls';
     const controlsSelector = '.' + controlsClass;
 
     function showControls() {
@@ -117,9 +117,8 @@
     }
 
     function createControls() {
-        const wrapper = document.createElement('div');
-        wrapper.classList.add(controlsClass);
-        wrapper.style.display = 'inline-flex';
+        const controls = document.createElement('div');
+        controls.classList.add(controlsClass);
         
         const prevTrackButton = document.createElement('button');
         prevTrackButton.classList.add('ytp-button');
@@ -127,11 +126,10 @@
             <path id="youtube-tracks-speeddown" fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
         </svg>`;
         prevTrackButton.addEventListener("click", toPrevTrack); 
-        wrapper.appendChild(prevTrackButton);
+        controls.appendChild(prevTrackButton);
 
         const trackLabel = document.createElement('div');
-        trackLabel.style.display = 'inline-block';
-        trackLabel.style.textAlign = 'center';
+        // trackLabel.classList.add('_youtube-tracks_controls__track-label')
         setInterval(function () {
             if (player == null || tracks == null || tracks.length == 0) {
                 if (trackLabel.innerHTML != '') {
@@ -150,7 +148,7 @@
                 }
             }
         }, 1000);
-        wrapper.appendChild(trackLabel);
+        controls.appendChild(trackLabel);
         
         const nextTrackButton = document.createElement('button');
         nextTrackButton.classList.add('ytp-button');
@@ -158,9 +156,9 @@
             <path id="youtube-tracks-speedup" fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
         </svg>`;
         nextTrackButton.addEventListener("click", toNextTrack); 
-        wrapper.appendChild(nextTrackButton);
+        controls.appendChild(nextTrackButton);
 
-        return wrapper;
+        return controls;
     }
 
     function hideControls() {
