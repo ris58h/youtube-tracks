@@ -26,9 +26,5 @@
       "js": ["content.js"],
       "css": ["page.css"]
     }
-  ],
-
-  "web_accessible_resources": [
-    "page.js"
   ]
 }
