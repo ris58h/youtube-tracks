@@ -73,6 +73,7 @@
                     name += o instanceof Element ? o.textContent : o;
                 }
                 name = name.replace(/[ \-\[\(]*\d\d?(:\d\d)+[ \-\]\)]*/, " ").trim();
+                name = name.replace(/^\d\d?[.\)] */, "")
                 tracks.push({time, name});
             }
         });
