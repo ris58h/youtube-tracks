@@ -8,4 +8,8 @@
 
 ._youtube-tracks_controls__track-label {
     width: 200px;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden
 }
