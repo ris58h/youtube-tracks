@@ -30,9 +30,11 @@
             }
             if (tracks == null) {
                 const commentText = document.querySelector("#content #comments #comment #content-text");
-                const parsedTracks = parseTracks(commentText);
-                if (parsedTracks != null && parsedTracks.length > 0) {
-                    tracks = parsedTracks;
+                if (commentText) {
+                    const parsedTracks = parseTracks(commentText);
+                    if (parsedTracks != null && parsedTracks.length > 0) {
+                        tracks = parsedTracks;
+                    }
                 }
             }
             if (player != null && tracks != null && tracks.length > 0) {

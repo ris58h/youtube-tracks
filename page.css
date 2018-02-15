@@ -1,5 +1,5 @@
 .ytp-chrome-controls {
-    text-align: center;
+    text-align: center !important;
 }
 
 ._youtube-tracks_controls {
@@ -8,6 +8,7 @@
 
 ._youtube-tracks_controls__track-label {
     width: 200px;
+    text-align: center;
     display: block;
     white-space: nowrap;
     text-overflow: ellipsis;
