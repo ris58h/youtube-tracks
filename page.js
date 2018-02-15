@@ -24,14 +24,14 @@
             const description = document.querySelector("#content #description");
             if (description) {
                 const parsedTracks = parseTracks(description);
-                if (parsedTracks.length > 0) {
+                if (parsedTracks != null && parsedTracks.length > 0) {
                     tracks = parsedTracks;
                 }
             }
             if (tracks == null) {
                 const commentText = document.querySelector("#content #comments #comment #content-text");
                 const parsedTracks = parseTracks(commentText);
-                if (parsedTracks.length > 0) {
+                if (parsedTracks != null && parsedTracks.length > 0) {
                     tracks = parsedTracks;
                 }
             }
