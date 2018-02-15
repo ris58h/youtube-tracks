@@ -23,14 +23,20 @@
         if (tracks == null && window.location.pathname == '/watch') {
             const description = document.querySelector("#content #description");
             if (description) {
-                //TODO It could be description of previous video!
-                const parsedTracks = parseDescription(description);
+                const parsedTracks = parseTracks(description);
                 if (parsedTracks.length > 0) {
                     tracks = parsedTracks;
                 }
-                if (player != null && tracks != null && tracks.length > 0) {
-                    showControls();
+            }
+            if (tracks == null) {
+                const commentText = document.querySelector("#content #comments #comment #content-text");
+                const parsedTracks = parseTracks(commentText);
+                if (parsedTracks.length > 0) {
+                    tracks = parsedTracks;
                 }
+            }
+            if (player != null && tracks != null && tracks.length > 0) {
+                showControls();
             }
         }
     }, 1000);
@@ -43,13 +49,13 @@
         }
     });
 
-    function parseDescription(description) {
-        if (!description.hasChildNodes()) {
+    function parseTracks(element) {
+        if (!element.hasChildNodes()) {
             return null;
         }
         const tracks = [];
         const videoId = parseParams(window.location.href)['v'];
-        processLines(description, (line) => {
+        processLines(element, (line) => {
             let time = null;
             for (o of line) {
                 if (o instanceof Element && o.tagName == 'A') {
