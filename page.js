@@ -70,7 +70,7 @@
                 for (o of line) {
                     name += o instanceof Element ? o.textContent : o;
                 }
-                name = name.replace(/[ -]*\d+(:\d\d)+[ -]*/, " ").trim();
+                name = name.replace(/[ \-\[\(]*\d+(:\d\d)+[ \-\]\)]*/, " ").trim();
                 tracks.push({time, name});
             }
         });
