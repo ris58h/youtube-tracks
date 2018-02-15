@@ -60,11 +60,11 @@
                 }
             }
             if (time != null) {
-                //TODO better name extraction
                 let name = "";
                 for (o of line) {
                     name += o instanceof Element ? o.textContent : o;
                 }
+                name = name.replace(/[ -]*(\d+:)+\d+[ -]*/, " ").trim();
                 tracks.push({time, name});
             }
         });
@@ -85,14 +85,14 @@
                     }
                     const endsWithEOL = text.charAt(text.length - 1) == '\n';
                     const textLines = text.split('\n').filter(l => l.length > 0);
-                for (let i = 0; i < textLines.length; i++) {
-                    const textLine = textLines[i];
+                    for (let i = 0; i < textLines.length; i++) {
+                        const textLine = textLines[i];
                         line.push(textLine);
                         if (i < textLines.length - 1 || endsWithEOL) {
-                        callback(line);
-                        line = [];
+                            callback(line);
+                            line = [];
+                        }
                     }
-                }
                 }
             } else if (node.nodeType == Node.ELEMENT_NODE) {
                 line.push(node);
