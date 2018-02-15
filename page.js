@@ -142,8 +142,8 @@
         trackLabel.classList.add('_youtube-tracks_controls__track-label')
         setInterval(function () {
             if (player == null || tracks == null || tracks.length == 0) {
-                if (trackLabel.innerHTML != '') {
-                    trackLabel.innerHTML = '';
+                if (trackLabel.textContent != '') {
+                    trackLabel.textContent = '';
                 }
                 return;
             }
@@ -151,8 +151,8 @@
             for (let i = tracks.length -1; i >= 0; i--) {
                 const track = tracks[i];
                 if (currentTime >= track.time) {
-                    if (trackLabel.innerHTML != track.name) {
-                        trackLabel.innerHTML = track.name;
+                    if (trackLabel.textContent != track.name) {
+                        trackLabel.textContent = track.name;
                     }
                     return;
                 }
