@@ -5,3 +5,7 @@
 ._youtube-tracks_controls {
     display: inline-flex;
 }
+
+._youtube-tracks_controls__track-label {
+    width: 200px;
+}

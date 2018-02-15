@@ -129,7 +129,7 @@
         controls.appendChild(prevTrackButton);
 
         const trackLabel = document.createElement('div');
-        // trackLabel.classList.add('_youtube-tracks_controls__track-label')
+        trackLabel.classList.add('_youtube-tracks_controls__track-label')
         setInterval(function () {
             if (player == null || tracks == null || tracks.length == 0) {
                 if (trackLabel.innerHTML != '') {
