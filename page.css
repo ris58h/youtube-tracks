@@ -1,3 +1,7 @@
+.ytp-chrome-controls {
+    text-align: center;
+}
+
 ._youtube-tracks_controls {
     display: inline-flex;
 }
