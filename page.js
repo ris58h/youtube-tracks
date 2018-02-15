@@ -76,21 +76,23 @@
         let line = [];
         for (node of parent.childNodes) {
             if (node.nodeType == Node.TEXT_NODE) {
-                const textLines = node.textContent.split('\n');
-                for (let i = 0; i < textLines.length; i++) {
-                    const textLine = textLines[i];
-                    if (textLine.length > 0) {
-                        line.push(textLine);
+                const text = node.textContent;
+                if (text.length > 0) {
+                    const startsWithEOL = text.charAt(0) == '\n';
+                    if (startsWithEOL && line.length > 0) {
                         callback(line);
                         line = [];
-                    } else if (line.length > 0) {
+                    }
+                    const endsWithEOL = text.charAt(text.length - 1) == '\n';
+                    const textLines = text.split('\n').filter(l => l.length > 0);
+                for (let i = 0; i < textLines.length; i++) {
+                    const textLine = textLines[i];
+                        line.push(textLine);
+                        if (i < textLines.length - 1 || endsWithEOL) {
                         callback(line);
                         line = [];
                     }
                 }
-                if (line.length > 0) {
-                    callback(line);
-                    line = [];
                 }
             } else if (node.nodeType == Node.ELEMENT_NODE) {
                 line.push(node);
