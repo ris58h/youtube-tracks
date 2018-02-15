@@ -3,7 +3,7 @@
 
   "name": "YouTube Tracks",
   "description": "YouTube tracklist navigation.",
-  "version": "0.1",
+  "version": "1.0.0",
 
   "applications": {
     "gecko": {
