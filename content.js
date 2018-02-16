@@ -42,13 +42,16 @@ setInterval(function () {
     }
 }, 1000);
 
-document.addEventListener("keyup", function(e) {
-    if (e.key == 'p') {
-        toPrevTrack();
-    } else if (e.key == 'n') {
-        toNextTrack();
-    }
-});
+let enableShortcuts = true;
+if (enableShortcuts) {
+    document.addEventListener("keyup", function(e) {
+        if (e.key == 'p') {
+            toPrevTrack();
+        } else if (e.key == 'n') {
+            toNextTrack();
+        }
+    });
+}
 
 function parseTracks(element) {
     if (!element.hasChildNodes()) {
@@ -56,7 +59,10 @@ function parseTracks(element) {
     }
     const tracks = [];
     const videoId = parseParams(window.location.href)['v'];
+    let showTrackNumber = false;//TODO use setings
+    let lineNumber = 0;
     processLines(element, (line) => {
+        lineNumber++;
         let time = null;
         for (o of line) {
             if (o instanceof Element && o.tagName == 'A') {
@@ -71,8 +77,11 @@ function parseTracks(element) {
             for (o of line) {
                 name += o instanceof Element ? o.textContent : o;
             }
-            name = name.replace(/[ \-\[\(]*\d\d?(:\d\d)+[ \-\]\)]*/, " ").trim();
-            name = name.replace(/^\d\d?[.\)] */, "")
+            name = name.replace(/[ \-\[\(]*\d\d?(:\d\d)+[ \-\]\)]*/, " ").trim();// cut out timing
+            name = name.replace(/^\d\d?[.\)] */, "");//cut out track number
+            if (showTrackNumber) {
+                name = lineNumber + '. ' + name;
+            }
             tracks.push({time, name});
         }
     });
