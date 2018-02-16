@@ -1,5 +1,4 @@
 function saveOptions(e) {
-  e.preventDefault();
   save({
     "showTrackNumber": document.querySelector("#showTrackNumber").checked,
     "useShortcuts": document.querySelector("#useShortcuts").checked
@@ -13,5 +12,8 @@ function restoreOptions() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", restoreOptions);
-document.querySelector("form").addEventListener("submit", saveOptions);
+document.addEventListener("DOMContentLoaded", function() {
+  restoreOptions();
+  document.querySelector("#showTrackNumber").addEventListener('change', saveOptions);
+  document.querySelector("#useShortcuts").addEventListener('change', saveOptions);
+});
