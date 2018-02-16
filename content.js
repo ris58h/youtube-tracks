@@ -24,7 +24,7 @@ load(function (settings) {
     setInterval(function () {
         if (video == null && window.location.pathname == '/watch') {
             video = document.querySelector("video");
-            if (tracks != null && tracks.length > 0) {
+            if (tracks != null) {
                 showControls();
             }
         }
@@ -35,7 +35,7 @@ load(function (settings) {
             const description = document.querySelector("#content #description");
             if (description) {
                 const parsedTracks = parseTracks(description);
-                if (parsedTracks != null && parsedTracks.length > 0) {
+                if (parsedTracks != null && parsedTracks.length > 1) {
                     tracks = parsedTracks;
                 }
             }
@@ -43,12 +43,12 @@ load(function (settings) {
                 const commentText = document.querySelector("#content #comments #comment #content-text");
                 if (commentText) {
                     const parsedTracks = parseTracks(commentText);
-                    if (parsedTracks != null && parsedTracks.length > 0) {
+                    if (parsedTracks != null && parsedTracks.length > 1) {
                         tracks = parsedTracks;
                     }
                 }
             }
-            if (video != null && tracks != null && tracks.length > 0) {
+            if (video != null && tracks != null) {
                 showControls();
             }
         }
@@ -159,7 +159,7 @@ function createControls() {
     const trackLabel = document.createElement('div');
     trackLabel.classList.add('_youtube-tracks_controls__track-label')
     setInterval(function () {
-        if (video == null || tracks == null || tracks.length == 0) {
+        if (video == null || tracks == null) {
             if (trackLabel.textContent != '') {
                 trackLabel.textContent = '';
             }
@@ -178,6 +178,9 @@ function createControls() {
                 }
                 return;
             }
+        }
+        if (trackLabel.textContent != '') {
+            trackLabel.textContent = '';
         }
     }, 1000);
     controls.appendChild(trackLabel);
@@ -201,7 +204,7 @@ function hideControls() {
 }
 
 function toPrevTrack() {
-    if (video == null || tracks == null || tracks.length == 0) {
+    if (video == null || tracks == null) {
         return;
     }
     const currentTime = video.currentTime;
@@ -221,7 +224,7 @@ function toPrevTrack() {
 }
 
 function toNextTrack() {
-    if (video == null || tracks == null || tracks.length == 0) {
+    if (video == null || tracks == null) {
         return;
     }
     const currentTime = video.currentTime;
