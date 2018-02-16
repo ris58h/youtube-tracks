@@ -9,57 +9,57 @@ const navListener = function(e) {
 window.addEventListener("popstate", navListener)
 window.addEventListener("yt-navigate-start", navListener);
 
-setInterval(function () {
-    if (video == null && window.location.pathname == '/watch') {
-        video = document.querySelector("video");
-        if (tracks != null && tracks.length > 0) {
-            showControls();
-        }
-    }
-}, 1000);
-
-setInterval(function () {
-    if (tracks == null && window.location.pathname == '/watch') {
-        const description = document.querySelector("#content #description");
-        if (description) {
-            const parsedTracks = parseTracks(description);
-            if (parsedTracks != null && parsedTracks.length > 0) {
-                tracks = parsedTracks;
+load(function (settings) {
+    setInterval(function () {
+        if (video == null && window.location.pathname == '/watch') {
+            video = document.querySelector("video");
+            if (tracks != null && tracks.length > 0) {
+                showControls();
             }
         }
-        if (tracks == null) {
-            const commentText = document.querySelector("#content #comments #comment #content-text");
-            if (commentText) {
-                const parsedTracks = parseTracks(commentText);
+    }, 1000);
+    
+    setInterval(function () {
+        if (tracks == null && window.location.pathname == '/watch') {
+            const description = document.querySelector("#content #description");
+            if (description) {
+                const parsedTracks = parseTracks(description, settings["showTrackNumber"]);
                 if (parsedTracks != null && parsedTracks.length > 0) {
                     tracks = parsedTracks;
                 }
             }
+            if (tracks == null) {
+                const commentText = document.querySelector("#content #comments #comment #content-text");
+                if (commentText) {
+                    const parsedTracks = parseTracks(commentText, settings["showTrackNumber"]);
+                    if (parsedTracks != null && parsedTracks.length > 0) {
+                        tracks = parsedTracks;
+                    }
+                }
+            }
+            if (video != null && tracks != null && tracks.length > 0) {
+                showControls();
+            }
         }
-        if (video != null && tracks != null && tracks.length > 0) {
-            showControls();
-        }
+    }, 1000);
+
+    if (settings["useShortcuts"]) {
+        document.addEventListener("keyup", function(e) {
+            if (e.key == 'p') {
+                toPrevTrack();
+            } else if (e.key == 'n') {
+                toNextTrack();
+            }
+        });
     }
-}, 1000);
+});
 
-let enableShortcuts = true;
-if (enableShortcuts) {
-    document.addEventListener("keyup", function(e) {
-        if (e.key == 'p') {
-            toPrevTrack();
-        } else if (e.key == 'n') {
-            toNextTrack();
-        }
-    });
-}
-
-function parseTracks(element) {
+function parseTracks(element, showTrackNumber) {
     if (!element.hasChildNodes()) {
         return null;
     }
     const tracks = [];
     const videoId = parseParams(window.location.href)['v'];
-    let showTrackNumber = false;//TODO use setings
     let lineNumber = 0;
     processLines(element, (line) => {
         lineNumber++;

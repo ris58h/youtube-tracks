@@ -12,6 +12,7 @@
   },
 
   "permissions": [
+    "storage"
   ],
 
   "icons": {
@@ -20,10 +21,14 @@
    "128": "icons/icon128.png"
   },
 
+  "options_ui": {
+    "page": "options.html"
+  },
+
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
-      "js": ["content.js"],
+      "js": ["settings.js", "content.js"],
       "css": ["page.css"]
     }
   ]
