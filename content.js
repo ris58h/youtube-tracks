@@ -9,7 +9,18 @@ const navListener = function(e) {
 window.addEventListener("popstate", navListener)
 window.addEventListener("yt-navigate-start", navListener);
 
+let showTrackNumber = null;
+let useShortcuts = null;
+
+addChangeListener(function (settings) {
+    showTrackNumber = settings["showTrackNumber"];
+    useShortcuts = settings["useShortcuts"];
+})
+
 load(function (settings) {
+    showTrackNumber = settings["showTrackNumber"];
+    useShortcuts = settings["useShortcuts"];
+
     setInterval(function () {
         if (video == null && window.location.pathname == '/watch') {
             video = document.querySelector("video");
@@ -23,7 +34,7 @@ load(function (settings) {
         if (tracks == null && window.location.pathname == '/watch') {
             const description = document.querySelector("#content #description");
             if (description) {
-                const parsedTracks = parseTracks(description, settings["showTrackNumber"]);
+                const parsedTracks = parseTracks(description);
                 if (parsedTracks != null && parsedTracks.length > 0) {
                     tracks = parsedTracks;
                 }
@@ -31,7 +42,7 @@ load(function (settings) {
             if (tracks == null) {
                 const commentText = document.querySelector("#content #comments #comment #content-text");
                 if (commentText) {
-                    const parsedTracks = parseTracks(commentText, settings["showTrackNumber"]);
+                    const parsedTracks = parseTracks(commentText);
                     if (parsedTracks != null && parsedTracks.length > 0) {
                         tracks = parsedTracks;
                     }
@@ -43,18 +54,19 @@ load(function (settings) {
         }
     }, 1000);
 
-    if (settings["useShortcuts"]) {
-        document.addEventListener("keyup", function(e) {
-            if (e.key == 'p') {
-                toPrevTrack();
-            } else if (e.key == 'n') {
-                toNextTrack();
-            }
-        });
+});
+
+document.addEventListener("keyup", function(e) {
+    if (useShortcuts) {
+        if (e.key == 'p') {
+            toPrevTrack();
+        } else if (e.key == 'n') {
+            toNextTrack();
+        }
     }
 });
 
-function parseTracks(element, showTrackNumber) {
+function parseTracks(element) {
     if (!element.hasChildNodes()) {
         return null;
     }
@@ -79,9 +91,6 @@ function parseTracks(element, showTrackNumber) {
             }
             name = name.replace(/[ \-\[\(]*\d\d?(:\d\d)+[ \-\]\)]*/, " ").trim();// cut out timing
             name = name.replace(/^\d\d?[.\)] */, "");//cut out track number
-            if (showTrackNumber) {
-                name = lineNumber + '. ' + name;
-            }
             tracks.push({time, name});
         }
     });
@@ -160,8 +169,12 @@ function createControls() {
         for (let i = tracks.length -1; i >= 0; i--) {
             const track = tracks[i];
             if (currentTime >= track.time) {
-                if (trackLabel.textContent != track.name) {
-                    trackLabel.textContent = track.name;
+                let trackName = track.name;
+                if (showTrackNumber) {
+                    trackName = (i + 1) + '. ' + trackName;
+                }
+                if (trackLabel.textContent != trackName) {
+                    trackLabel.textContent = trackName;
                 }
                 return;
             }
