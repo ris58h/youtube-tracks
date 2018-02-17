@@ -1,16 +1,16 @@
 .ytp-chrome-controls {
-    text-align: center !important;
+  text-align: center !important;
 }
 
 ._youtube-tracks_controls {
-    display: inline-flex;
+  display: inline-flex;
 }
 
 ._youtube-tracks_controls__track-label {
-    width: 200px;
-    text-align: center;
-    display: block;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden
+  width: 200px;
+  text-align: center;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

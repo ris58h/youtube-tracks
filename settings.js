@@ -1,5 +1,5 @@
-function load(callback) {
-    chrome.storage.sync.get("settings", function(result) {
+function load (callback) {
+  chrome.storage.sync.get("settings", (result) => {
         if (result && result.settings) {
             callback(result.settings);
         } else {
@@ -11,14 +11,14 @@ function load(callback) {
     });
 }
 
-function save(settings) {
-    chrome.storage.sync.set({
-        "settings": settings
-    });
+function save (settings) {
+  chrome.storage.sync.set({
+    "settings": settings,
+  });
 }
 
-function addChangeListener(listener) {
-    chrome.storage.onChanged.addListener(function(changes, namespace) {
+function addChangeListener (listener) {
+  chrome.storage.onChanged.addListener((changes, namespace) => {
         for (key in changes) {
             if (key == "settings") {
                 var storageChange = changes[key];
