@@ -1,7 +1,7 @@
 let video = null;
 let tracks = null;
 
-const navListener = function(e) {
+const navListener = function() {
     hideControls();
     video = null;
     tracks = null;
@@ -42,7 +42,7 @@ load(function (settings) {
     ]
     setInterval(function () {
         if (tracks == null && window.location.pathname == '/watch') {
-            for (tracklistSelector of tracklistSelectors) {
+            for (const tracklistSelector of tracklistSelectors) {
                 const tracklist = document.querySelector(tracklistSelector);
                 if (tracklist) {
                     const parsedTracks = parseTracks(tracklist);
@@ -76,11 +76,9 @@ function parseTracks(element) {
     }
     const tracks = [];
     const videoId = parseParams(window.location.href)['v'];
-    let lineNumber = 0;
     processLines(element, (line) => {
-        lineNumber++;
         let time = null;
-        for (o of line) {
+        for (const o of line) {
             if (o instanceof Element && o.tagName == 'A') {
                 const params = parseParams(o.href);
                 if (params['v'] == videoId && params['t']) {
@@ -90,7 +88,7 @@ function parseTracks(element) {
         }
         if (time != null) {
             let name = "";
-            for (o of line) {
+            for (const o of line) {
                 name += o instanceof Element ? o.textContent : o;
             }
             name = name.replace(/[ \-\[\(]*\d\d?(:\d\d)+[ \-\]\)]*/, " ").trim();// cut out timing
@@ -104,7 +102,7 @@ function parseTracks(element) {
 
 function processLines(parent, callback) {
     let line = [];
-    for (node of parent.childNodes) {
+    for (const node of parent.childNodes) {
         if (node.nodeType == Node.TEXT_NODE) {
             const text = node.textContent;
             if (text.length > 0) {
