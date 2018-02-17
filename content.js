@@ -6,8 +6,10 @@ const navListener = function(e) {
     video = null;
     tracks = null;
 }
+//TODO 'spfdone' fires with 'popstate' (double navListener call on history back)
 window.addEventListener("popstate", navListener)
 window.addEventListener("yt-navigate-start", navListener);
+window.addEventListener("spfdone", navListener);
 
 let showTrackNumber = null;
 let useShortcuts = null;
@@ -30,21 +32,22 @@ load(function (settings) {
         }
     }, 1000);
     
+    const tracklistSelectors = [
+        "#content #description",
+        "#content #comments #comment #content-text",
+        
+        "#eow-description",
+        ".comment-renderer-text-content",
+    ]
     setInterval(function () {
         if (tracks == null && window.location.pathname == '/watch') {
-            const description = document.querySelector("#content #description");
-            if (description) {
-                const parsedTracks = parseTracks(description);
-                if (parsedTracks != null && parsedTracks.length > 1) {
-                    tracks = parsedTracks;
-                }
-            }
-            if (tracks == null) {
-                const commentText = document.querySelector("#content #comments #comment #content-text");
-                if (commentText) {
-                    const parsedTracks = parseTracks(commentText);
+            for (tracklistSelector of tracklistSelectors) {
+                const tracklist = document.querySelector(tracklistSelector);
+                if (tracklist) {
+                    const parsedTracks = parseTracks(tracklist);
                     if (parsedTracks != null && parsedTracks.length > 1) {
                         tracks = parsedTracks;
+                        break;
                     }
                 }
             }
@@ -121,7 +124,12 @@ function processLines(parent, callback) {
                 }
             }
         } else if (node.nodeType == Node.ELEMENT_NODE) {
-            line.push(node);
+            if (node.tagName == "BR" && line.length > 0) {
+                callback(line);
+                line = [];
+            } else {
+                line.push(node);
+            }
         }
     }
     if (line.length > 0) {
@@ -239,11 +247,12 @@ function toNextTrack() {
 }
 
 function parseParams(href) {
-    var paramstr = href.split('?')[1];
-    var paramsarr = paramstr.split('&');
-    var params = {};
-    for (const kv of paramsarr) {
-        var tmparr = kv.split('=');
+    const noHash = href.split('#')[0];
+    const paramString = noHash.split('?')[1];
+    const paramsArray = paramString.split('&');
+    const params = {};
+    for (const kv of paramsArray) {
+        const tmparr = kv.split('=');
         params[tmparr[0]] = tmparr[1];
     }
     return params;
