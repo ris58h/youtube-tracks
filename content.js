@@ -6,9 +6,10 @@ const navListener = function(e) {
     video = null;
     tracks = null;
 }
-//TODO 'spfdone' fires with 'popstate' (double navListener call on history back)
 window.addEventListener("popstate", navListener)
 window.addEventListener("yt-navigate-start", navListener);
+// old design
+//TODO 'spfdone' fires with 'popstate' (double navListener call on history back)
 window.addEventListener("spfdone", navListener);
 
 let showTrackNumber = null;
@@ -35,7 +36,7 @@ load(function (settings) {
     const tracklistSelectors = [
         "#content #description",
         "#content #comments #comment #content-text",
-        
+        // old design
         "#eow-description",
         ".comment-renderer-text-content",
     ]
