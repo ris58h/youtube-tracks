@@ -248,11 +248,13 @@ function toNextTrack() {
 function parseParams(href) {
     const noHash = href.split('#')[0];
     const paramString = noHash.split('?')[1];
-    const paramsArray = paramString.split('&');
     const params = {};
-    for (const kv of paramsArray) {
-        const tmparr = kv.split('=');
-        params[tmparr[0]] = tmparr[1];
+    if (paramString) {
+        const paramsArray = paramString.split('&');
+        for (const kv of paramsArray) {
+            const tmparr = kv.split('=');
+            params[tmparr[0]] = tmparr[1];
+        }
     }
     return params;
 }
