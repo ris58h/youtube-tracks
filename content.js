@@ -214,16 +214,12 @@ function toPrevTrack() {
     if (video == null || tracks == null) {
         return;
     }
+    const prevGap = 2;
     const currentTime = video.currentTime;
     let seekTime = 0;
-    for (let i = 0; i < tracks.length; i++) {
-        const prevGap = 2;
-        if (currentTime < tracks[i].time + prevGap) {
-            if (i == 0) {
-                seekTime = 0;
-            } else {
-                seekTime = tracks[i - 1].time;
-            }
+    for (let i = tracks.length - 1; i >= 0 ; i--) {
+        if (currentTime > tracks[i].time + prevGap) {
+            seekTime = tracks[i].time;
             break;
         }
     }
