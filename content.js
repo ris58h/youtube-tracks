@@ -235,7 +235,8 @@ function toNextTrack() {
         return;
     }
     const currentTime = video.currentTime;
-    let seekTime = video.duration;
+    const hack = 0.1; // Without this hack YouTube player starts video with the beginning.
+    let seekTime = video.duration - hack;
     for (const track of tracks) {
         if (currentTime < track.time) {
             seekTime = track.time;
