@@ -1,0 +1,6 @@
+{
+    "name": "youtube-tracks",
+    "devDependencies": {
+        "eslint": "^4.19.1"
+    }
+}

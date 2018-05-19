@@ -1,4 +1,4 @@
-function saveOptions(e) {
+function saveOptions() {
   save({
     "showTrackNumber": document.querySelector("#showTrackNumber").checked,
     "useShortcuts": document.querySelector("#useShortcuts").checked

@@ -91,8 +91,8 @@ function parseTracks(element) {
             for (const o of line) {
                 name += o instanceof Element ? o.textContent : o;
             }
-            name = name.replace(/[ \-\[\(]*\d\d?(:\d\d)+[ \-\]\)]*/, " ").trim();// cut out timing
-            name = name.replace(/^\d\d?[.\)] */, "");//cut out track number
+            name = name.replace(/[ \-[(]*\d\d?(:\d\d)+[ \-\])]*/, " ").trim();// cut out timing
+            name = name.replace(/^\d\d?[.)] */, "");//cut out track number
             tracks.push({time, name});
         }
     });
@@ -262,4 +262,4 @@ function parseTime(t) {
         return parseInt(t.substring(0, t.length - 1));
     }
     return null;
-};
+}
