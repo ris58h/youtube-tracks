@@ -1,12 +1,12 @@
 let video = null;
 let tracks = null;
 
-const navListener = function() {
+const navListener = function () {
     hideControls();
     video = null;
     tracks = null;
 }
-window.addEventListener("popstate", navListener)
+window.addEventListener("popstate", navListener);
 window.addEventListener("yt-navigate-start", navListener);
 // old design
 //TODO 'spfdone' fires with 'popstate' (double navListener call on history back)
@@ -18,7 +18,7 @@ let useShortcuts = null;
 addChangeListener(function (settings) {
     showTrackNumber = settings["showTrackNumber"];
     useShortcuts = settings["useShortcuts"];
-})
+});
 
 load(function (settings) {
     showTrackNumber = settings["showTrackNumber"];
@@ -32,7 +32,7 @@ load(function (settings) {
             }
         }
     }, 1000);
-    
+
     const tracklistSelectors = [
         "#content #description",
         "#content #comments #comment #content-text",
@@ -60,7 +60,7 @@ load(function (settings) {
 
 });
 
-document.addEventListener("keyup", function(e) {
+document.addEventListener("keyup", function (e) {
     if (useShortcuts) {
         if (e.key == 'p') {
             toPrevTrack();
@@ -93,11 +93,11 @@ function parseTracks(element) {
             }
             name = name.replace(/[ \-[(]*\d\d?(:\d\d)+[ \-\])]*/, " ").trim();// cut out timing
             name = name.replace(/^\d\d?[.)] */, "");//cut out track number
-            tracks.push({time, name});
+            tracks.push({ time, name });
         }
     });
     tracks.sort((a, b) => a.time - b.time);
-    return tracks;        
+    return tracks;
 }
 
 function processLines(parent, callback) {
@@ -154,13 +154,13 @@ function showControls() {
 function createControls() {
     const controls = document.createElement('div');
     controls.classList.add(controlsClass);
-    
+
     const prevTrackButton = document.createElement('button');
     prevTrackButton.classList.add('ytp-button');
     prevTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
         <path id="youtube-tracks-speeddown" fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
     </svg>`;
-    prevTrackButton.addEventListener("click", toPrevTrack); 
+    prevTrackButton.addEventListener("click", toPrevTrack);
     controls.appendChild(prevTrackButton);
 
     const trackLabel = document.createElement('div');
@@ -173,7 +173,7 @@ function createControls() {
             return;
         }
         const currentTime = video.currentTime;
-        for (let i = tracks.length -1; i >= 0; i--) {
+        for (let i = tracks.length - 1; i >= 0; i--) {
             const track = tracks[i];
             if (currentTime >= track.time) {
                 let trackName = track.name;
@@ -191,13 +191,13 @@ function createControls() {
         }
     }, 1000);
     controls.appendChild(trackLabel);
-    
+
     const nextTrackButton = document.createElement('button');
     nextTrackButton.classList.add('ytp-button');
     nextTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
         <path id="youtube-tracks-speedup" fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
     </svg>`;
-    nextTrackButton.addEventListener("click", toNextTrack); 
+    nextTrackButton.addEventListener("click", toNextTrack);
     controls.appendChild(nextTrackButton);
 
     return controls;
@@ -217,7 +217,7 @@ function toPrevTrack() {
     const prevGap = 2;
     const currentTime = video.currentTime;
     let seekTime = 0;
-    for (let i = tracks.length - 1; i >= 0 ; i--) {
+    for (let i = tracks.length - 1; i >= 0; i--) {
         if (currentTime > tracks[i].time + prevGap) {
             seekTime = tracks[i].time;
             break;

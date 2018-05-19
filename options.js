@@ -12,7 +12,7 @@ function restoreOptions() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", function () {
   restoreOptions();
   document.querySelector("#showTrackNumber").addEventListener('change', saveOptions);
   document.querySelector("#useShortcuts").addEventListener('change', saveOptions);
