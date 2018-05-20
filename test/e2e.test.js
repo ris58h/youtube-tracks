@@ -55,6 +55,14 @@ describe("e2e", () => {
             await testPrevTrack(page, 0);
         });
 
+        it('track label', async () => {
+            await testTrackLabel(page, 0, "");
+            await testTrackLabel(page, 29, "гол Ребича (0:1)");
+            await testTrackLabel(page, 323, "гол Левандовского (1:1)");
+            await testTrackLabel(page, 538, "гол Ребича (1:2)");
+            await testTrackLabel(page, 811, "гол Гачиновича (1:3)");
+        });
+
         after(async () => {
             await page.close();
         });
@@ -134,5 +142,12 @@ describe("e2e", () => {
         await prevTrack(page);
         const currentTime = await getCurrentTime(page);
         except(currentTime).to.be.closeTo(expectedTime, 1);
+    }
+
+    async function testTrackLabel(page, time, expectedLabel) {
+        await setCurrentTime(page, time);
+        await page.waitFor(1000);
+        const label = await page.$eval("._youtube-tracks_controls__track-label", e => e.textContent);
+        except(label).to.equal(expectedLabel);
     }
 });
