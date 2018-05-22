@@ -1,6 +1,7 @@
 const fs = require('fs-extra');
 
 (async function() {
+    await fs.remove("./dist");
     const version = (await fs.readJson("./manifest.json")).version;
     const dest = "./dist/youtube-tracks-" + version;
     async function copyToDest(src) {
