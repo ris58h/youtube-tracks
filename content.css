@@ -1,0 +1,39 @@
+.ytp-chrome-controls {
+    text-align: center !important;
+}
+
+._youtube-tracks_controls {
+    display: inline-flex;
+}
+
+._youtube-tracks_controls__track-label {
+    width: 200px;
+    text-align: center;
+    display: block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden
+}
+
+
+._youtube-tracks_tooltip {
+    max-width: 300px;
+    top: 405px;
+
+    position: absolute;
+    z-index: 1002;
+    font-size: 118%;
+    font-weight: 500;
+    line-height: 15px;
+}
+
+._youtube-tracks_tooltip-text-wrapper {
+    border-radius: 3px;
+}
+
+._youtube-tracks_tooltip-text {
+    display: block;
+    background-color: rgba(28,28,28,0.9);
+    border-radius: 2px;
+    padding: 5px 9px;
+}

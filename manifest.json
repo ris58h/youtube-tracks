@@ -29,7 +29,7 @@
         {
             "matches": ["https://www.youtube.com/*"],
             "js": ["settings.js", "content.js"],
-            "css": ["page.css"]
+            "css": ["content.css"]
         }
     ]
 }

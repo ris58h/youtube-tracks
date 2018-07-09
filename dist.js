@@ -14,6 +14,6 @@ const fs = require('fs-extra');
     await copyToDest("manifest.json");
     await copyToDest("options.html");
     await copyToDest("options.js");
-    await copyToDest("page.css");
+    await copyToDest("content.css");
     await copyToDest("settings.js");
 })();

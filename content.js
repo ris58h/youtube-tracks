@@ -14,6 +14,7 @@ window.addEventListener("spfdone", navListener);
 
 let showTrackNumber = null;
 let useShortcuts = null;
+const prevGap = 3;//TODO settings?
 
 addChangeListener(function (settings) {
     showTrackNumber = settings["showTrackNumber"];
@@ -140,15 +141,14 @@ const controlsClass = '_youtube-tracks_controls';
 const controlsSelector = '.' + controlsClass;
 
 function showControls() {
-    const trackControls = document.querySelector(controlsSelector);
-    if (trackControls) {
-        trackControls.style.visibility = "visible";
-        return;
+    let controls = document.querySelector(controlsSelector);
+    if (controls) {
+        controls.style.visibility = "visible";
+    } else {
+        controls = createControls();
+        const rightControls = document.querySelector('.ytp-right-controls');
+        rightControls.parentNode.insertBefore(controls, rightControls);
     }
-
-    const controls = createControls();
-    const rightControls = document.querySelector('.ytp-right-controls');
-    rightControls.parentNode.insertBefore(controls, rightControls);
 }
 
 function createControls() {
@@ -161,6 +161,7 @@ function createControls() {
         <path id="youtube-tracks-speeddown" fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
     </svg>`;
     prevTrackButton.addEventListener("click", toPrevTrack);
+    addTooltip(prevTrackButton, prevTrackName);
     controls.appendChild(prevTrackButton);
 
     const trackLabel = document.createElement('div');
@@ -198,6 +199,7 @@ function createControls() {
         <path id="youtube-tracks-speedup" fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
     </svg>`;
     nextTrackButton.addEventListener("click", toNextTrack);
+    addTooltip(nextTrackButton, nextTrackName);
     controls.appendChild(nextTrackButton);
 
     return controls;
@@ -214,7 +216,6 @@ function toPrevTrack() {
     if (video == null || tracks == null) {
         return;
     }
-    const prevGap = 2;
     const currentTime = video.currentTime;
     let seekTime = 0;
     for (let i = tracks.length - 1; i >= 0; i--) {
@@ -240,6 +241,93 @@ function toNextTrack() {
         }
     }
     video.currentTime = seekTime;
+}
+
+function prevTrackName() {
+    if (video == null || tracks == null) {
+        return null;
+    }
+    const currentTime = video.currentTime;
+    for (let i = tracks.length - 1; i >= 0; i--) {
+        const diff = currentTime - tracks[i].time;
+        if (diff > 0) {
+            if (diff < prevGap) {
+                return i > 0 ? tracks[i - 1].name : null;
+            } else {
+                return "Re: " + tracks[i].name;//TODO better name?
+            }
+        }
+    }
+    return null;
+}
+
+function nextTrackName() {
+    if (video == null || tracks == null) {
+        return;
+    }
+    const currentTime = video.currentTime;
+    for (const track of tracks) {
+        if (currentTime < track.time) {
+            return track.name;
+        }
+    }
+    return null;
+}
+
+function addTooltip(target, textFunction) {
+    target.addEventListener("mouseover", function () {
+        showTooltip(target, textFunction);
+    });
+    target.addEventListener("mouseout", function () {
+        hideTooltip();
+    });
+}
+
+//TODO change tooltip after Prev/Next button clicked or activated with Enter.
+//Seems like YouTube's tooltip is created lazily, so we have to use our own tooltip.
+const tooltipClass = '_youtube-tracks_tooltip';
+const tooltipSelector = '.' + tooltipClass;
+
+function showTooltip(target, textFunction) {
+    let tooltip = document.querySelector(tooltipSelector);
+    if (tooltip) {
+        const text = textFunction();
+        if (text) {
+            const baseLeft = document.querySelector("#movie_player").getBoundingClientRect().left;
+            const targetLeft = target.getBoundingClientRect().left;
+            const left = targetLeft - baseLeft;
+            tooltip.style.left = left + "px";
+            tooltip.querySelector("._youtube-tracks_tooltip-text").textContent = text;
+            tooltip.style.visibility = "visible";
+        }
+    } else {
+        tooltip = createTooltip();
+        tooltip.style.visibility = "hidden";
+        const parent = document.querySelector("#movie_player");
+        parent.appendChild(tooltip);
+    }
+}
+
+function createTooltip() {
+    const tooltip = document.createElement('div');
+    tooltip.classList.add(tooltipClass);
+
+    const textWrapper = document.createElement("div");
+    textWrapper.classList.add("_youtube-tracks_tooltip-text-wrapper");
+    tooltip.appendChild(textWrapper);
+
+    const text = document.createElement("div");
+    text.classList.add("_youtube-tracks_tooltip-text");
+    textWrapper.appendChild(text);
+
+    return tooltip;
+}
+
+function hideTooltip() {
+    const tooltip = document.querySelector(tooltipSelector);
+    if (tooltip) {
+        tooltip.style.visibility = "hidden";
+    }
 }
 
 function parseParams(href) {
