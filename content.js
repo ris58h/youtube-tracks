@@ -250,7 +250,7 @@ function prevTrackName() {
     const currentTime = video.currentTime;
     for (let i = tracks.length - 1; i >= 0; i--) {
         const diff = currentTime - tracks[i].time;
-        if (diff > 0) {
+        if (diff >= 0) {
             if (diff < prevGap) {
                 return i > 0 ? tracks[i - 1].name : null;
             } else {
@@ -276,36 +276,39 @@ function nextTrackName() {
 
 function addTooltip(target, textFunction) {
     target.addEventListener("mouseover", function () {
-        showTooltip(target, textFunction);
+        const text = textFunction();
+        if (text) {
+            showTooltip(target, text);
+        }
     });
-    target.addEventListener("mouseout", function () {
-        hideTooltip();
+    target.addEventListener("mouseout", hideTooltip);
+    target.addEventListener("click", function () {
+        const text = textFunction();
+        if (text) {
+            updateTooltip(text);
+        } else {
+            hideTooltip();
+        }
     });
 }
 
-//TODO change tooltip after Prev/Next button clicked or activated with Enter.
 //Seems like YouTube's tooltip is created lazily, so we have to use our own tooltip.
 const tooltipClass = '_youtube-tracks_tooltip';
 const tooltipSelector = '.' + tooltipClass;
 
-function showTooltip(target, textFunction) {
+function showTooltip(target, text) {
     let tooltip = document.querySelector(tooltipSelector);
-    if (tooltip) {
-        const text = textFunction();
-        if (text) {
-            const baseLeft = document.querySelector("#movie_player").getBoundingClientRect().left;
-            const targetLeft = target.getBoundingClientRect().left;
-            const left = targetLeft - baseLeft;
-            tooltip.style.left = left + "px";
-            tooltip.querySelector("._youtube-tracks_tooltip-text").textContent = text;
-            tooltip.style.visibility = "visible";
-        }
-    } else {
+    if (!tooltip) {
         tooltip = createTooltip();
-        tooltip.style.visibility = "hidden";
         const parent = document.querySelector("#movie_player");
         parent.appendChild(tooltip);
     }
+    const baseLeft = document.querySelector("#movie_player").getBoundingClientRect().left;
+    const targetLeft = target.getBoundingClientRect().left;
+    const left = targetLeft - baseLeft;
+    tooltip.style.left = left + "px";
+    tooltip.querySelector("._youtube-tracks_tooltip-text").textContent = text;
+    tooltip.style.visibility = "visible";
 }
 
 function createTooltip() {
@@ -327,6 +330,13 @@ function hideTooltip() {
     const tooltip = document.querySelector(tooltipSelector);
     if (tooltip) {
         tooltip.style.visibility = "hidden";
+    }
+}
+
+function updateTooltip(text) {
+    const tooltip = document.querySelector(tooltipSelector);
+    if (tooltip) {
+        tooltip.querySelector("._youtube-tracks_tooltip-text").textContent = text;
     }
 }
 
