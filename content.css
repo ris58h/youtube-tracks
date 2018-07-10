@@ -18,13 +18,15 @@
 
 ._youtube-tracks_tooltip {
     max-width: 300px;
-    top: 405px;
+    /* top: 405px; */
 
     position: absolute;
     z-index: 1002;
     font-size: 118%;
     font-weight: 500;
     line-height: 15px;
+
+    top: -35px;
 }
 
 ._youtube-tracks_tooltip-text-wrapper {

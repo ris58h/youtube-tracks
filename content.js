@@ -300,12 +300,12 @@ function showTooltip(target, text) {
     let tooltip = document.querySelector(tooltipSelector);
     if (!tooltip) {
         tooltip = createTooltip();
-        const parent = document.querySelector("#movie_player");
+        const parent = document.querySelector(".ytp-chrome-bottom");
         parent.appendChild(tooltip);
     }
-    const baseLeft = document.querySelector("#movie_player").getBoundingClientRect().left;
+    const parentLeft = document.querySelector(".ytp-chrome-bottom").getBoundingClientRect().left;
     const targetLeft = target.getBoundingClientRect().left;
-    const left = targetLeft - baseLeft;
+    const left = targetLeft - parentLeft;
     tooltip.style.left = left + "px";
     tooltip.querySelector("._youtube-tracks_tooltip-text").textContent = text;
     tooltip.style.visibility = "visible";
