@@ -19,21 +19,18 @@ describe("e2e", () => {
 
     describe('navigation', () => {
         let page;
-        let duration = 853;
+        const videoDuration = 853;
 
         before(async () => {
             page = await createPage("https://www.youtube.com/watch?v=Cqy6OiYRFus");
 
-            await page.waitFor(3000);
-            await waitThenScroll(page, "#comments");
-            await page.waitFor(3000);
+            await waitThenScroll(page, "#main #comments #sections");
+            await page.waitFor("ytd-comment-thread-renderer");
             await page.evaluate(() => window.scrollTo(0, 0));
-            
-            await page.waitFor(2000);
+            await page.waitFor("._youtube-tracks_controls");
             const skipAdButton = await page.$(".videoAdUiSkipButton");
             if (skipAdButton !== null) {
                 await page.click(".videoAdUiSkipButton");
-                await page.waitFor(1000);
             }
         });
 
@@ -43,11 +40,11 @@ describe("e2e", () => {
             await testNextTrack(page, 323);
             await testNextTrack(page, 538);
             await testNextTrack(page, 811);
-            await testNextTrack(page, duration);
+            await testNextTrack(page, videoDuration);
         });
 
         it('prev track', async () => {
-            await setCurrentTime(page, duration);
+            await setCurrentTime(page, videoDuration);
             await testPrevTrack(page, 811);
             await testPrevTrack(page, 538);
             await testPrevTrack(page, 323);
@@ -146,7 +143,7 @@ describe("e2e", () => {
 
     async function testTrackLabel(page, time, expectedLabel) {
         await setCurrentTime(page, time);
-        await page.waitFor(1000);
+        await page.waitFor(1000);//TODO Remove it when label is changed immediately.
         const label = await page.$eval("._youtube-tracks_controls__track-label", e => e.textContent);
         except(label).to.equal(expectedLabel);
     }
