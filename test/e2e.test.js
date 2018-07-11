@@ -154,7 +154,6 @@ describe("e2e", () => {
 
     async function testTrackLabel(page, time, expectedLabel) {
         await setCurrentTime(page, time)
-        await page.waitFor(1000)//It should be the same as label change frequency.
         const label = await getCurrentTrackLabel(page)
         except(label).to.equal(expectedLabel)
     }
