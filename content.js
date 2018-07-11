@@ -158,7 +158,7 @@ function createControls() {
     const prevTrackButton = document.createElement('button')
     prevTrackButton.classList.add('ytp-button')
     prevTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
-        <path id="youtube-tracks-speeddown" fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
+        <path fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
     </svg>`
     prevTrackButton.addEventListener("click", toPrevTrack)
     addTooltip(prevTrackButton, prevTrackName)
@@ -196,7 +196,7 @@ function createControls() {
     const nextTrackButton = document.createElement('button')
     nextTrackButton.classList.add('ytp-button')
     nextTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
-        <path id="youtube-tracks-speedup" fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
+        <path fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
     </svg>`
     nextTrackButton.addEventListener("click", toNextTrack)
     addTooltip(nextTrackButton, nextTrackName)
