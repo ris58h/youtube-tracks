@@ -20,6 +20,12 @@ describe("e2e", () => {
     describe('navigation', () => {
         let page
         const videoDuration = 853
+        const tracks = [
+            { time: 29, name: "гол Ребича (0:1)" },
+            { time: 323, name: "гол Левандовского (1:1)" },
+            { time: 538, name: "гол Ребича (1:2)" },
+            { time: 811, name: "гол Гачиновича (1:3)" },
+        ]
 
         before(async () => {
             page = await createPage("https://www.youtube.com/watch?v=Cqy6OiYRFus")
@@ -36,28 +42,25 @@ describe("e2e", () => {
 
         it('next track', async () => {
             await setCurrentTime(page, 0)
-            await testNextTrack(page, 29)
-            await testNextTrack(page, 323)
-            await testNextTrack(page, 538)
-            await testNextTrack(page, 811)
+            for (let i = 0; i < tracks.length; i++) {
+                await testNextTrack(page, tracks[i].time)
+            }
             await testNextTrack(page, videoDuration)
         })
 
         it('prev track', async () => {
             await setCurrentTime(page, videoDuration)
-            await testPrevTrack(page, 811)
-            await testPrevTrack(page, 538)
-            await testPrevTrack(page, 323)
-            await testPrevTrack(page, 29)
+            for (let i = tracks.length - 1; i >= 0; i--) {
+                await testPrevTrack(page, tracks[i].time)
+            }
             await testPrevTrack(page, 0)
         })
 
         it('track label', async () => {
             await testTrackLabel(page, 0, "")
-            await testTrackLabel(page, 29, "гол Ребича (0:1)")
-            await testTrackLabel(page, 323, "гол Левандовского (1:1)")
-            await testTrackLabel(page, 538, "гол Ребича (1:2)")
-            await testTrackLabel(page, 811, "гол Гачиновича (1:3)")
+            for (const track of tracks) {
+                await testTrackLabel(page, track.time, track.name)
+            }
         })
 
         after(async () => {
@@ -129,6 +132,10 @@ describe("e2e", () => {
         await page.$eval('video', (v, t) => v.currentTime = t, time)
     }
 
+    async function getCurrentTrackLabel(page) {
+        return await page.$eval("._youtube-tracks_controls__track-label", e => e.textContent)
+    }
+
     async function testNextTrack(page, expectedTime) {
         await nextTrack(page)
         const currentTime = await getCurrentTime(page)
@@ -144,7 +151,7 @@ describe("e2e", () => {
     async function testTrackLabel(page, time, expectedLabel) {
         await setCurrentTime(page, time)
         await page.waitFor(1000)//TODO Remove it when label is changed immediately.
-        const label = await page.$eval("._youtube-tracks_controls__track-label", e => e.textContent)
+        const label = await getCurrentTrackLabel(page)
         except(label).to.equal(expectedLabel)
     }
 })
