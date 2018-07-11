@@ -42,18 +42,18 @@ describe("e2e", () => {
 
         it('next track', async () => {
             await setCurrentTime(page, 0)
-            for (let i = 0; i < tracks.length; i++) {
-                await testNextTrack(page, tracks[i].time)
+            for (const track of tracks) {
+                await testNextTrack(page, track.time, track.name)
             }
-            await testNextTrack(page, videoDuration)
+            await testNextTrack(page, videoDuration, "гол Гачиновича (1:3)")
         })
 
         it('prev track', async () => {
             await setCurrentTime(page, videoDuration)
-            for (let i = tracks.length - 1; i >= 0; i--) {
-                await testPrevTrack(page, tracks[i].time)
+            for (const track of tracks.slice().reverse()) {
+                await testPrevTrack(page, track.time, track.name)
             }
-            await testPrevTrack(page, 0)
+            await testPrevTrack(page, 0, "")
         })
 
         it('track label', async () => {
@@ -136,21 +136,25 @@ describe("e2e", () => {
         return await page.$eval("._youtube-tracks_controls__track-label", e => e.textContent)
     }
 
-    async function testNextTrack(page, expectedTime) {
+    async function testNextTrack(page, expectedTime, expectedLabel) {
         await nextTrack(page)
         const currentTime = await getCurrentTime(page)
         except(currentTime).to.be.closeTo(expectedTime, 1)
+        const label = await getCurrentTrackLabel(page)
+        except(label).to.equal(expectedLabel)
     }
 
-    async function testPrevTrack(page, expectedTime) {
+    async function testPrevTrack(page, expectedTime, expectedLabel) {
         await prevTrack(page)
         const currentTime = await getCurrentTime(page)
         except(currentTime).to.be.closeTo(expectedTime, 1)
+        const label = await getCurrentTrackLabel(page)
+        except(label).to.equal(expectedLabel)
     }
 
     async function testTrackLabel(page, time, expectedLabel) {
         await setCurrentTime(page, time)
-        await page.waitFor(1000)//TODO Remove it when label is changed immediately.
+        await page.waitFor(1000)//It should be the same as label change frequency.
         const label = await getCurrentTrackLabel(page)
         except(label).to.equal(expectedLabel)
     }

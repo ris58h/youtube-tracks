@@ -166,31 +166,18 @@ function createControls() {
 
     const trackLabel = document.createElement('div')
     trackLabel.classList.add('_youtube-tracks_controls__track-label')
-    setInterval(function () {
-        if (video == null || tracks == null) {
-            if (trackLabel.textContent != '') {
-                trackLabel.textContent = ''
-            }
-            return
-        }
+    video.addEventListener("seeking", function () {
+        let trackName = ''
         const currentTime = video.currentTime
         for (let i = tracks.length - 1; i >= 0; i--) {
             const track = tracks[i]
             if (currentTime >= track.time) {
-                let trackName = track.name
-                if (showTrackNumber) {
-                    trackName = (i + 1) + '. ' + trackName
-                }
-                if (trackLabel.textContent != trackName) {
-                    trackLabel.textContent = trackName
-                }
-                return
+                trackName = showTrackNumber ? ((i + 1) + '. ' + track.name) : track.name
+                break
             }
         }
-        if (trackLabel.textContent != '') {
-            trackLabel.textContent = ''
-        }
-    }, 1000)
+        trackLabel.textContent = trackName
+    })
     controls.appendChild(trackLabel)
 
     const nextTrackButton = document.createElement('button')
