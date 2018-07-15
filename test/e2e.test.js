@@ -34,10 +34,8 @@ describe("e2e", () => {
             await page.waitFor("ytd-comment-thread-renderer")
             await page.evaluate(() => window.scrollTo(0, 0))
             await page.waitFor("._youtube-tracks_controls")
-            const skipAdButton = await page.$(".videoAdUiSkipButton")
-            if (skipAdButton !== null) {
-                await page.click(".videoAdUiSkipButton")
-            }
+            await page.waitFor(".videoAdUiSkipButton", { visible: true })
+            await page.click(".videoAdUiSkipButton")
         })
 
         it('next track', async () => {
