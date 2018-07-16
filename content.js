@@ -166,7 +166,7 @@ function createControls() {
 
     const trackLabel = document.createElement('div')
     trackLabel.classList.add('_youtube-tracks_controls__track-label')
-    video.addEventListener("seeking", function () {
+    const timeChangeListener = function () {
         let trackName = ''
         const currentTime = video.currentTime
         for (let i = tracks.length - 1; i >= 0; i--) {
@@ -177,7 +177,8 @@ function createControls() {
             }
         }
         trackLabel.textContent = trackName
-    })
+    }
+    video.addEventListener("timeupdate", timeChangeListener)
     controls.appendChild(trackLabel)
 
     const nextTrackButton = document.createElement('button')

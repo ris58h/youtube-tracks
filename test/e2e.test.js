@@ -54,11 +54,18 @@ describe("e2e", () => {
             await testPrevTrack(page, 0, "")
         })
 
-        it('track label', async () => {
+        it('should change track label on seek', async () => {
             await testTrackLabel(page, 0, "")
             for (const track of tracks) {
                 await testTrackLabel(page, track.time, track.name)
-            }
+            }    
+        })
+
+        it('should change track label when track changes', async () => {
+            await setCurrentTime(page, tracks[0].time - 1)
+            await page.waitFor(2000)
+            const label = await getCurrentTrackLabel(page)
+            except(label).to.equal(tracks[0].name)
         })
 
         after(async () => {
@@ -138,6 +145,7 @@ describe("e2e", () => {
         await nextTrack(page)
         const currentTime = await getCurrentTime(page)
         except(currentTime).to.be.closeTo(expectedTime, 1)
+        await waitHack(page)
         const label = await getCurrentTrackLabel(page)
         except(label).to.equal(expectedLabel)
     }
@@ -146,13 +154,21 @@ describe("e2e", () => {
         await prevTrack(page)
         const currentTime = await getCurrentTime(page)
         except(currentTime).to.be.closeTo(expectedTime, 1)
+        await waitHack(page)
         const label = await getCurrentTrackLabel(page)
         except(label).to.equal(expectedLabel)
     }
 
     async function testTrackLabel(page, time, expectedLabel) {
         await setCurrentTime(page, time)
+        await waitHack(page)
         const label = await getCurrentTrackLabel(page)
         except(label).to.equal(expectedLabel)
+    }
+    
+    // It seems like it takes time to change label after 'seeked'/'timechange' event occures.
+    // So we have to wait some time.
+    async function waitHack(page) {
+        await page.waitFor(700)
     }
 })
