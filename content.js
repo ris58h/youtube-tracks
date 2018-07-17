@@ -161,19 +161,39 @@ function createControls() {
         <path fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
     </svg>`
     prevTrackButton.addEventListener("click", toPrevTrack)
-    addTooltip(prevTrackButton, prevTrackName)
+    addTooltip(prevTrackButton, getPrevTrackName)
     controls.appendChild(prevTrackButton)
 
     const trackLabel = document.createElement('div')
     trackLabel.classList.add('_youtube-tracks_controls__track-label')
+    let currentTrackTimes
     const timeChangeListener = function () {
-        let trackName = ''
         const currentTime = video.currentTime
-        for (let i = tracks.length - 1; i >= 0; i--) {
-            const track = tracks[i]
-            if (currentTime >= track.time) {
-                trackName = showTrackNumber ? ((i + 1) + '. ' + track.name) : track.name
-                break
+        if (currentTrackTimes 
+            && currentTime >= currentTrackTimes.from 
+            && currentTime < currentTrackTimes.to) {
+                return
+        }
+        const i = getCurrentTrackIndex()
+        let trackName
+        if (i >= 0) {
+            trackName = (showTrackNumber ? (i + 1) + '. ' : '') + tracks[i].name
+            currentTrackTimes = {
+                from: tracks[i].time,
+                to: i < tracks.length -1 ? tracks[i + 1].time : video.duration
+            }
+        } else {
+            trackName = ''
+            if (i == -1) {
+                currentTrackTimes = {
+                    from: Number.MIN_VALUE,
+                    to: tracks[0].time
+                }    
+            } else {
+                currentTrackTimes = {
+                    from: video.duration,
+                    to: Number.MAX_VALUE
+                }
             }
         }
         trackLabel.textContent = trackName
@@ -187,7 +207,7 @@ function createControls() {
         <path fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
     </svg>`
     nextTrackButton.addEventListener("click", toNextTrack)
-    addTooltip(nextTrackButton, nextTrackName)
+    addTooltip(nextTrackButton, getNextTrackName)
     controls.appendChild(nextTrackButton)
 
     return controls
@@ -198,6 +218,19 @@ function hideControls() {
     if (trackControls) {
         trackControls.style.visibility = "hidden"
     }
+}
+
+function getCurrentTrackIndex() {
+    const currentTime = video.currentTime
+    if (currentTime == video.duration) {
+        return -tracks.length - 1
+    }
+    for (let i = tracks.length - 1; i >= 0; i--) {
+        if (currentTime >= tracks[i].time) {
+            return i
+        }
+    }
+    return -1
 }
 
 function toPrevTrack() {
@@ -231,7 +264,7 @@ function toNextTrack() {
     video.currentTime = seekTime
 }
 
-function prevTrackName() {
+function getPrevTrackName() {
     if (video == null || tracks == null) {
         return null
     }
@@ -249,7 +282,7 @@ function prevTrackName() {
     return null
 }
 
-function nextTrackName() {
+function getNextTrackName() {
     if (video == null || tracks == null) {
         return
     }

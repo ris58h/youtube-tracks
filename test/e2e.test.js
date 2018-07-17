@@ -43,7 +43,7 @@ describe("e2e", () => {
             for (const track of tracks) {
                 await testNextTrack(page, track.time, track.name)
             }
-            await testNextTrack(page, videoDuration, "гол Гачиновича (1:3)")
+            await testNextTrack(page, videoDuration, "")
         })
 
         it('prev track', async () => {
