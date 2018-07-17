@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer')
-const except = require("chai").expect
+const expect = require("chai").expect
 const parseUrl = require("url").parse
 
 describe("e2e", () => {
@@ -65,7 +65,7 @@ describe("e2e", () => {
             await setCurrentTime(page, tracks[0].time - 1)
             await page.waitFor(2000)
             const label = await getCurrentTrackLabel(page)
-            except(label).to.equal(tracks[0].name)
+            expect(label).to.equal(tracks[0].name)
         })
 
         after(async () => {
@@ -144,26 +144,26 @@ describe("e2e", () => {
     async function testNextTrack(page, expectedTime, expectedLabel) {
         await nextTrack(page)
         const currentTime = await getCurrentTime(page)
-        except(currentTime).to.be.closeTo(expectedTime, 1)
+        expect(currentTime).to.be.closeTo(expectedTime, 1)
         await waitHack(page)
         const label = await getCurrentTrackLabel(page)
-        except(label).to.equal(expectedLabel)
+        expect(label).to.equal(expectedLabel)
     }
 
     async function testPrevTrack(page, expectedTime, expectedLabel) {
         await prevTrack(page)
         const currentTime = await getCurrentTime(page)
-        except(currentTime).to.be.closeTo(expectedTime, 1)
+        expect(currentTime).to.be.closeTo(expectedTime, 1)
         await waitHack(page)
         const label = await getCurrentTrackLabel(page)
-        except(label).to.equal(expectedLabel)
+        expect(label).to.equal(expectedLabel)
     }
 
     async function testTrackLabel(page, time, expectedLabel) {
         await setCurrentTime(page, time)
         await waitHack(page)
         const label = await getCurrentTrackLabel(page)
-        except(label).to.equal(expectedLabel)
+        expect(label).to.equal(expectedLabel)
     }
     
     // It seems like it takes time to change label after 'seeked'/'timechange' event occures.
