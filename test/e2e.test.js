@@ -61,7 +61,7 @@ describe("e2e", () => {
             await testTrackLabel(page, 0, "")
             for (const track of tracks) {
                 await testTrackLabel(page, track.time, track.name)
-            }    
+            }
         })
 
         it('should change track label when track changes', async () => {
@@ -69,6 +69,16 @@ describe("e2e", () => {
             await page.waitFor(2000)
             const label = await getCurrentTrackLabel(page)
             expect(label).to.equal(tracks[0].name)
+        })
+
+        it('should show looltip', async() => {
+            await testTooltip(page, 0, null, tracks[0].name)
+            for (const [i, track] of tracks.entries()) {
+                const prevTrackName = i == 0 ? null : tracks[i - 1].name
+                const nextTrackName = i < tracks.length - 1 ? tracks[i + 1].name : null
+                await testTooltip(page, track.time, prevTrackName, nextTrackName)
+            }
+            await testTooltip(page, videoDuration, "Re: " + tracks[tracks.length - 1].name, null)
         })
 
         after(async () => {
@@ -144,6 +154,17 @@ describe("e2e", () => {
         return await page.$eval("._youtube-tracks_controls__track-label", e => e.textContent)
     }
 
+    async function getCurrentTooltip(page) {
+        const tooltip = await page.$("._youtube-tracks_tooltip")
+        if (tooltip != null) {
+            const visible = await page.evaluate(e => e.style.visibility == "visible", tooltip)
+            if (visible) {
+                return await page.$eval("._youtube-tracks_tooltip-text", e => e.textContent)
+            }
+        }
+        return null
+    }
+
     async function testNextTrack(page, expectedTime, expectedLabel) {
         await nextTrack(page)
         const currentTime = await getCurrentTime(page)
@@ -168,10 +189,22 @@ describe("e2e", () => {
         const label = await getCurrentTrackLabel(page)
         expect(label).to.equal(expectedLabel)
     }
-    
+
     // It seems like it takes time to change label after 'seeked'/'timechange' event occures.
     // So we have to wait some time.
     async function waitHack(page) {
         await page.waitFor(700)
+    }
+
+    async function testTooltip(page, time, expectedPrevTooltip, expectedNextTooltip) {
+        await setCurrentTime(page, time)
+        await ttt("._youtube-tracks_controls__prev", expectedPrevTooltip)
+        await ttt("._youtube-tracks_controls__next", expectedNextTooltip)
+
+        async function ttt(selector, expectedTooltip) {
+            await page.hover(selector)
+            const tooltip = await getCurrentTooltip(page)
+            expect(tooltip).to.equal(expectedTooltip)
+        }
     }
 })

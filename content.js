@@ -156,6 +156,7 @@ function createControls() {
     controls.classList.add(controlsClass)
 
     const prevTrackButton = document.createElement('button')
+    prevTrackButton.classList.add('_youtube-tracks_controls__prev')
     prevTrackButton.classList.add('ytp-button')
     prevTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
         <path fill="#fff" d="m 12,12 h 2 v 12 h -2 z m 3.5,6 8.5,6 0,-2 -6.5,-4 6.5,-4 V 12 z"></path>
@@ -169,8 +170,8 @@ function createControls() {
     let currentTrackTimes
     const timeChangeListener = function () {
         const currentTime = video.currentTime
-        if (currentTrackTimes 
-            && currentTime >= currentTrackTimes.from 
+        if (currentTrackTimes
+            && currentTime >= currentTrackTimes.from
             && currentTime < currentTrackTimes.to) {
                 return
         }
@@ -188,7 +189,7 @@ function createControls() {
                 currentTrackTimes = {
                     from: Number.MIN_VALUE,
                     to: tracks[0].time
-                }    
+                }
             } else {
                 currentTrackTimes = {
                     from: video.duration,
@@ -202,6 +203,7 @@ function createControls() {
     controls.appendChild(trackLabel)
 
     const nextTrackButton = document.createElement('button')
+    nextTrackButton.classList.add('_youtube-tracks_controls__next')
     nextTrackButton.classList.add('ytp-button')
     nextTrackButton.innerHTML = `<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%">
         <path fill="#fff" d="M 12,24 20.5,18 12,12 12,14 18.5,18 12,22 V 24 z M 22,12 v 12 h 2 V 12 h -2 z"></path>
