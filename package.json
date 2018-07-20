@@ -1,7 +1,7 @@
 {
     "name": "youtube-tracks",
     "scripts": {
-        "test": "mocha --timeout 15000",
+        "test": "mocha --timeout 25000",
         "dist": "node dist.js"
     },
     "devDependencies": {

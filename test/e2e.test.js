@@ -28,15 +28,22 @@ describe("e2e", () => {
         ]
 
         before(async () => {
+            console.log("createPage")
             page = await createPage("https://www.youtube.com/watch?v=Cqy6OiYRFus")
-
+            console.log("$ad")
             const ad = await page.$(".videoAdUi")
+            console.log("waitTheScroll")
             await waitThenScroll(page, "#main #comments #sections")
+            console.log("wait renderer")
             await page.waitFor("ytd-comment-thread-renderer")
+            console.log("scrollTo 0 0")
             await page.evaluate(() => window.scrollTo(0, 0))
+            console.log("wait controls")
             await page.waitFor("._youtube-tracks_controls")
             if (ad) {
+                console.log("wait skip")
                 await page.waitFor(".videoAdUiSkipButton", { visible: true })
+                console.log("click skip")
                 await page.click(".videoAdUiSkipButton")
             }
         })
