@@ -31,7 +31,7 @@ describe("e2e", () => {
             page = await createPage("https://www.youtube.com/watch?v=Cqy6OiYRFus")
 
             const ad = await page.$(".videoAdUi")
-            await waitThenScroll(page, "#main #comments #sections")
+            await waitThenScroll(page, "#comments #sections")
             await page.waitFor("ytd-comment-thread-renderer")
             await page.evaluate(() => window.scrollTo(0, 0))
             await page.waitFor("._youtube-tracks_controls")
