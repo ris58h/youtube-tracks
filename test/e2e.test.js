@@ -6,12 +6,13 @@ describe("e2e", () => {
     let browser
 
     before(async () => {
+        const pathToExtension = process.cwd() + "/extension"
         browser = await puppeteer.launch({
             headless: false, // Chrome Headless doesn't support extensions. https://github.com/GoogleChrome/puppeteer/issues/659
             args: [
                 '--no-sandbox',
-                '--disable-extensions-except=' + process.cwd(),
-                '--load-extension=' + process.cwd(),
+                '--disable-extensions-except=' + pathToExtension,
+                '--load-extension=' + pathToExtension,
                 '--mute-audio'
             ]
         })
