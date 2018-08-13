@@ -18,7 +18,7 @@ describe("e2e", () => {
     })
 
 
-    test("Tracks in comment", {
+    testTracksInComments("Tracks in comment", {
         url: "https://www.youtube.com/watch?v=Cqy6OiYRFus",
         duration: 853,
         tracks: [
@@ -29,7 +29,7 @@ describe("e2e", () => {
         ]
     })
 
-    test("Tracks in description", {
+    testTracksInDescription("Tracks in description", {
         url: "https://www.youtube.com/watch?v=lM9-hGNQx3g",
         duration: 1264,
         tracks: [
@@ -49,7 +49,15 @@ describe("e2e", () => {
         browser.close()
     })
 
-    function test(name, info) {
+    function testTracksInDescription(name, info) {
+        test(name, info, false)
+    }
+
+    function testTracksInComments(name, info) {
+        test(name, info, true)
+    }
+
+    function test(name, info, comments) {
         describe(name, () => {
             let page
             const videoDuration = info.duration
@@ -59,9 +67,11 @@ describe("e2e", () => {
                 page = await createPage(info.url)
 
                 const ad = await page.$(".videoAdUi")
-                await waitThenScroll(page, "#comments #sections")
-                await page.waitFor("ytd-comment-thread-renderer")
-                await page.evaluate(() => window.scrollTo(0, 0))
+                if (comments) {
+                    await waitThenScroll(page, "#comments #sections")
+                    await page.waitFor("ytd-comment-thread-renderer")
+                    await page.evaluate(() => window.scrollTo(0, 0))
+                }
                 await page.waitFor("._youtube-tracks_controls")
                 if (ad) {
                     await page.waitFor(".videoAdUiSkipButton", { visible: true })
