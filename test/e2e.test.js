@@ -17,78 +17,103 @@ describe("e2e", () => {
         })
     })
 
-    describe('navigation', () => {
-        let page
-        const videoDuration = 853
-        const tracks = [
+
+    test("Tracks in comment", {
+        url: "https://www.youtube.com/watch?v=Cqy6OiYRFus",
+        duration: 853,
+        tracks: [
             { time: 29, name: "гол Ребича (0:1)" },
             { time: 323, name: "гол Левандовского (1:1)" },
             { time: 538, name: "гол Ребича (1:2)" },
             { time: 811, name: "гол Гачиновича (1:3)" },
         ]
+    })
 
-        before(async () => {
-            page = await createPage("https://www.youtube.com/watch?v=Cqy6OiYRFus")
-
-            const ad = await page.$(".videoAdUi")
-            await waitThenScroll(page, "#comments #sections")
-            await page.waitFor("ytd-comment-thread-renderer")
-            await page.evaluate(() => window.scrollTo(0, 0))
-            await page.waitFor("._youtube-tracks_controls")
-            if (ad) {
-                await page.waitFor(".videoAdUiSkipButton", { visible: true })
-                await page.click(".videoAdUiSkipButton")
-            }
-        })
-
-        it('next track', async () => {
-            await setCurrentTime(page, 0)
-            for (const track of tracks) {
-                await testNextTrack(page, track.time, track.name)
-            }
-            await testNextTrack(page, videoDuration, "")
-        })
-
-        it('prev track', async () => {
-            await setCurrentTime(page, videoDuration)
-            for (const track of tracks.slice().reverse()) {
-                await testPrevTrack(page, track.time, track.name)
-            }
-            await testPrevTrack(page, 0, "")
-        })
-
-        it('should change track label on seek', async () => {
-            await testTrackLabel(page, 0, "")
-            for (const track of tracks) {
-                await testTrackLabel(page, track.time, track.name)
-            }
-        })
-
-        it('should change track label when track changes', async () => {
-            await setCurrentTime(page, tracks[0].time - 1)
-            await page.waitFor(2000)
-            const label = await getCurrentTrackLabel(page)
-            expect(label).to.equal(tracks[0].name)
-        })
-
-        it('should show looltip', async() => {
-            await testTooltip(page, 0, null, tracks[0].name)
-            for (const [i, track] of tracks.entries()) {
-                const prevTrackName = i == 0 ? null : tracks[i - 1].name
-                const nextTrackName = i < tracks.length - 1 ? tracks[i + 1].name : null
-                await testTooltip(page, track.time, prevTrackName, nextTrackName)
-            }
-            await testTooltip(page, videoDuration, "Re: " + tracks[tracks.length - 1].name, null)
-        })
-
-        after(async () => {
-            await page.close()
-        })
+    test("Tracks in description", {
+        url: "https://www.youtube.com/watch?v=lM9-hGNQx3g",
+        duration: 1264,
+        tracks: [
+            { time: 38, name: "Design" },
+            { time: 217, name: "Display" },
+            { time: 308, name: "Sound" },
+            { time: 405, name: "Performance" },
+            { time: 495, name: "Battery" },
+            { time: 573, name: "Software" },
+            { time: 717, name: "Camera" },
+            { time: 974, name: "Summary" },
+            { time: 1093, name: "Conclusion" },
+        ]
     })
 
     after(() => {
         browser.close()
     })
+
+    function test(name, info) {
+        describe(name, () => {
+            let page
+            const videoDuration = info.duration
+            const tracks = info.tracks
+
+            before(async () => {
+                page = await createPage(info.url)
+
+                const ad = await page.$(".videoAdUi")
+                await waitThenScroll(page, "#comments #sections")
+                await page.waitFor("ytd-comment-thread-renderer")
+                await page.evaluate(() => window.scrollTo(0, 0))
+                await page.waitFor("._youtube-tracks_controls")
+                if (ad) {
+                    await page.waitFor(".videoAdUiSkipButton", { visible: true })
+                    await page.click(".videoAdUiSkipButton")
+                }
+            })
+
+            it('next track', async () => {
+                await setCurrentTime(page, 0)
+                for (const track of tracks) {
+                    await testNextTrack(page, track.time, track.name)
+                }
+                await testNextTrack(page, videoDuration, "")
+            })
+
+            it('prev track', async () => {
+                await setCurrentTime(page, videoDuration)
+                for (const track of tracks.slice().reverse()) {
+                    await testPrevTrack(page, track.time, track.name)
+                }
+                await testPrevTrack(page, 0, "")
+            })
+
+            it('should change track label on seek', async () => {
+                await testTrackLabel(page, 0, "")
+                for (const track of tracks) {
+                    await testTrackLabel(page, track.time, track.name)
+                }
+            })
+
+            it('should change track label when track changes', async () => {
+                await setCurrentTime(page, tracks[0].time - 1)
+                await page.waitFor(2000)
+                const label = await getCurrentTrackLabel(page)
+                expect(label).to.equal(tracks[0].name)
+            })
+
+            it('should show looltip', async() => {
+                await testTooltip(page, 0, null, tracks[0].name)
+                for (const [i, track] of tracks.entries()) {
+                    const prevTrackName = i == 0 ? null : tracks[i - 1].name
+                    const nextTrackName = i < tracks.length - 1 ? tracks[i + 1].name : null
+                    await testTooltip(page, track.time, prevTrackName, nextTrackName)
+                }
+                await testTooltip(page, videoDuration, "Re: " + tracks[tracks.length - 1].name, null)
+            })
+
+            after(async () => {
+                await page.close()
+            })
+        })
+    }
 
     async function createPage(url) {
         const page = await browser.newPage()
