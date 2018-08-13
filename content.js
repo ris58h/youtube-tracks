@@ -36,7 +36,9 @@ load(function (settings) {
 
     const tracklistSelectors = [
         "#content #description",
+        "#content #description > *", // desing changed in august 2018
         "#content #comments #comment #content-text",
+
         // old design
         "#eow-description",
         ".comment-renderer-text-content",
