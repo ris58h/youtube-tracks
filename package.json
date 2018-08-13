@@ -5,6 +5,7 @@
         "dist": "node dist.js"
     },
     "devDependencies": {
+        "archiver": "^2.1.1",
         "chai": "^4.1.2",
         "eslint": "^4.19.1",
         "fs-extra": "^6.0.1",
