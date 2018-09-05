@@ -68,16 +68,15 @@ describe("e2e", () => {
                 page = await createPage(info.url)
 
                 const ad = await page.$(".videoAdUi")
+                if (ad) {
+                    await page.$eval("video", v => v.currentTime = 100500)
+                }
                 if (comments) {
                     await waitThenScroll(page, "#comments #sections")
                     await page.waitFor("ytd-comment-thread-renderer")
                     await page.evaluate(() => window.scrollTo(0, 0))
                 }
                 await page.waitFor("._youtube-tracks_controls")
-                if (ad) {
-                    await page.waitFor(".videoAdUiSkipButton", { visible: true })
-                    await page.click(".videoAdUiSkipButton")
-                }
             })
 
             it('next track', async () => {
